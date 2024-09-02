@@ -138,6 +138,12 @@
                 totalCharge += calculateChargeForRange(thirdRangeUnits, 14.55);
             }
 
+            // Calculate charge for the units between 300 and 500
+            if (units > 500) {
+                const thirdRangeUnits = Math.min(units - 500, 200);
+                totalCharge += calculateChargeForRange(thirdRangeUnits, 16.64);
+            }
+
             return totalCharge;
         }
 
@@ -158,6 +164,11 @@
             if (units > 300) {
                 const thirdRangeUnits = Math.min(units - 300, 200);
                 totalFuelCharge += calculateChargeForRange(thirdRangeUnits, 1.100);
+            }
+
+            if (units > 500) {
+                const thirdRangeUnits = Math.min(units - 500, 200);
+                totalFuelCharge += calculateChargeForRange(thirdRangeUnits, 1.150);
             }
 
             return totalFuelCharge;
