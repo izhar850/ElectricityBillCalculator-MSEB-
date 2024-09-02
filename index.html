@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Charge Calculator(MSEB)</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+            font-size: 1.8em;
+        }
+        label {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: block;
+            color: #555;
+        }
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .result h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.5em;
+        }
+        .result p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+        .result .total {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.2em;
+            padding: 10px;
+            background: #e7f1ff;
+            border-left: 5px solid #007bff;
+            border-radius: 4px;
+        }
+        .result .final-charge {
+            font-weight: bold;
+            color: #fff;
+            background-color: #ff4d4d;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1.4em;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Electricity Charge Calculator(MSEB)</h1>
+        <label for="units">Enter the number of units used:</label>
+        <input type="number" id="units" placeholder="Enter units" min="0">
+        <button onclick="calculateCharge()">Calculate Charge</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <footer>
+        <p>Developed by Izhar Ahmad</p>
+    </footer>
+
+    <script>
+        const RENT = 138;
+        const TAX_RATE = 0.16;
+
+        function calculateChargeForRange(units, rate) {
+            return units * rate;
+        }
+
+        function calculateElectricityCharge(units) {
+            let totalCharge = 0;
+
+            // Calculate charge for the first 100 units
+            if (units > 0) {
+                const firstRangeUnits = Math.min(units, 100);
+                totalCharge += calculateChargeForRange(firstRangeUnits, 4.71);
+            }
+
+            // Calculate charge for the units between 100 and 300
+            if (units > 100) {
+                const secondRangeUnits = Math.min(units - 100, 200);
+                totalCharge += calculateChargeForRange(secondRangeUnits, 10.29);
+            }
+
+            // Calculate charge for the units between 300 and 500
+            if (units > 300) {
+                const thirdRangeUnits = Math.min(units - 300, 200);
+                totalCharge += calculateChargeForRange(thirdRangeUnits, 14.55);
+            }
+
+            return totalCharge;
+        }
+
+        function calculateFuelCharges(units) {
+            let totalFuelCharge = 0;
+
+            // Calculate fuel charge based on units
+            if (units > 0) {
+                const firstRangeUnits = Math.min(units, 100);
+                totalFuelCharge += calculateChargeForRange(firstRangeUnits, 0.450);
+            }
+
+            if (units > 100) {
+                const secondRangeUnits = Math.min(units - 100, 200);
+                totalFuelCharge += calculateChargeForRange(secondRangeUnits, 0.800);
+            }
+
+            if (units > 300) {
+                const thirdRangeUnits = Math.min(units - 300, 200);
+                totalFuelCharge += calculateChargeForRange(thirdRangeUnits, 1.100);
+            }
+
+            return totalFuelCharge;
+        }
+
+        function calculateCharge() {
+            const unitsInput = document.getElementById('units').value;
+            const units = parseFloat(unitsInput);
+
+            // Validate input
+            if (isNaN(units) || units < 0) {
+                document.getElementById('result').innerText = "Invalid input. Please enter a positive number.";
+                return;
+            }
+
+            // Calculate electricity, vahan, fuel, and rent charges
+            const electricityCharge = calculateElectricityCharge(units);
+            const conductionCharge = units * 1.17;
+            const fuelCharge = calculateFuelCharges(units);
+            const totalCharge = electricityCharge + conductionCharge + fuelCharge + RENT;
+
+            // Calculate tax charge and final charge
+            const taxCharge = totalCharge * TAX_RATE;
+            const finalCharge = totalCharge + taxCharge;
+
+            // Display results
+            document.getElementById('result').innerHTML = `
+                <h2>Calculation Results</h2>
+                <p>Electricity Charge: ₹${electricityCharge.toFixed(2)}</p>
+                <p>Conduction Charge: ₹${conductionCharge.toFixed(2)}</p>
+                <p>Fuel Charge: ₹${fuelCharge.toFixed(2)}</p>
+                <p>Rent: ₹${RENT.toFixed(2)}</p>
+                <p>Tax Charge (16%): ₹${taxCharge.toFixed(2)}</p>
+                <p class="total">Total Charge (before tax): ₹${totalCharge.toFixed(2)}</p>
+                <div class="final-charge">Final Charge (after tax): ₹${finalCharge.toFixed(2)}</div>
+            `;
+        }
+    </script>
+</body>
+</html>
